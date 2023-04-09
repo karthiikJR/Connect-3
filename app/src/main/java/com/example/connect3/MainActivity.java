@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
     // winnerName says which user has won default value is 2, if 0 then O wins, if 1 then X wins
     private int user = 0;
     private int [] state = {2 ,2 ,2 ,2 ,2 ,2 ,2 ,2 ,2 };
-    private int [][] winningStates = {{0, 1, 2}, {3, 4, 5},{6, 7, 8},{0 ,3 ,6},{1, 4, 7},{2, 5, 8},{0, 4, 8},{2, 4, 6}};
+    private final int [][] winningStates = {{0, 1, 2}, {3, 4, 5},{6, 7, 8},{0 ,3 ,6},{1, 4, 7},{2, 5, 8},{0, 4, 8},{2, 4, 6}};
     private int winnerName = 2;
     private KonfettiView kv;
     private boolean ifGameCompleted = false;
@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     Button retryBtn;
 
 
+    // retry function after the game ends
     public void retry(View view){
         Intent intent = getIntent();
         finish();
@@ -53,9 +54,11 @@ public class MainActivity extends AppCompatActivity {
         //getting the id of the clicked position
         int clickedBox = Integer.parseInt(insert.getTag().toString());
 
+        // checking if the position is already clicked or not and even if the game has completed to eliminate the possibility of selecting the remaining positing
         if(state[clickedBox] == 2 && !ifGameCompleted) {
-            //updating the state i.e if its 2 that means its empty and if 0 then circle and 1 means x
+            // updating the state i.e if its 2 that means its empty and if 0 then circle and 1 means x
             state[clickedBox] = user;
+            // keep a track of no of moves for the game draw
             count++;
 
 
@@ -78,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 
             }
+            // checking who is the winner based on the winnerName value
             if (winnerName != 2) {
 
                 EmitterConfig emitterConfig = new Emitter(100L, TimeUnit.MILLISECONDS).max(100);
@@ -91,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
                                 .build()
                 );
 
+                // making sure after game ends the player can't press the remaining positions
                 ifGameCompleted = true;
 
                 if(winnerName == 1){
@@ -101,6 +106,7 @@ public class MainActivity extends AppCompatActivity {
                 retryBtn.animate().alpha(1).setDuration(500);
 
             }
+            // game draw condition
             if (count == 9){
                 ifGameCompleted = true;
                 tv.setText("Game Draw!");
@@ -117,6 +123,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // initialization of button, confetti and a winner display TextView
         kv = findViewById(R.id.konfettiView);
         tv = findViewById(R.id.tvWinnerName);
         retryBtn = findViewById(R.id.btnRetry);
